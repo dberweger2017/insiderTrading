@@ -1,0 +1,2 @@
+The goal of this repository is to develop a profitable trading algorithm based on the live SEC form 4 filings. The algorithm will be developed in Python and will be deployed on Quantopian. The algorithm will be based on the following paper: [Insider Trading and Innovation](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2880285). The paper finds that insider trading is a good predictor of future firm performance. The paper also finds that insider trading is a good predictor of future firm innovation.
+
