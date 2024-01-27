@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Load the CSV file
-file_path = 'consolidated_with_stock_data_slice_preprocesed.csv'  # Replace with your file path
+file_path = 'consolidated_with_stock_data_preprocesed.csv'  # Replace with your file path
 data = pd.read_csv(file_path)
 
 # Identifying all the "Change" columns

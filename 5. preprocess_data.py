@@ -1,9 +1,9 @@
 import pandas as pd
+from tqdm import tqdm
+tqdm.pandas()
 
 data = pd.read_csv("consolidated_with_stock_data.csv")
-
-# print the column names
-print(data.columns)
+print("Number of trades:", len(data))
 
 def convert_number(str):
     str = str.replace("%", "")
@@ -17,7 +17,8 @@ def convert_number(str):
         number = 1
     return number
 
-data["ΔOwn"] = data["ΔOwn"].apply(convert_number)
+# Use progress_apply instead of apply
+data["ΔOwn"] = data["ΔOwn"].progress_apply(convert_number)
 
 def convert_value_to_number(str):
     str = str.replace("$", "")
@@ -25,7 +26,8 @@ def convert_value_to_number(str):
     number = float(str)
     return number
 
-data["Value"] = data["Value"].apply(convert_value_to_number)
+# Use progress_apply here as well
+data["Value"] = data["Value"].progress_apply(convert_value_to_number)
 
 data["Interesting"] = data["ΔOwn"] * data["Value"]
 

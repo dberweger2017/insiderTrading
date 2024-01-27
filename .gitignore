@@ -2,5 +2,6 @@ consolidated.csv
 ticker_data.csv
 consolidated_growth.csv
 consolidated_with_stock_data.csv
+consolidated_with_stock_data_preprocesed.csv
 /data
 .DS_Store
