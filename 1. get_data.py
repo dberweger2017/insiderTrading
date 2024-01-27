@@ -11,7 +11,6 @@ if not os.path.exists('data'):
 def getStockData(start_date, end_date):
     start_str = start_date.strftime('%m%%2F%d%%2F%Y')
     end_str = end_date.strftime('%m%%2F%d%%2F%Y')
-    #url = f"http://openinsider.com/screener?s=&o=&pl=&ph=&ll=&lh=&fd=-1&fdr={end_str}+-+{start_str}&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=1000&page=1"
     url = f"http://openinsider.com/screener?s=&o=&pl=&ph=&ll=&lh=&fd=-1&fdr={end_str}+-+{start_str}&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=1000&page=1"
     try:
         r = requests.get(url)
