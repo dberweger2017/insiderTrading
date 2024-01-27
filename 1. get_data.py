@@ -32,7 +32,7 @@ def saveData(i):
 def main():
     with ThreadPoolExecutor() as executor:
         print(f"Using {executor._max_workers} workers.")
-        list(tqdm(executor.map(saveData, range(9_000)), total=9_000))
+        list(tqdm(executor.map(saveData, range(7_700)), total=7_700))
 
 if __name__ == "__main__":
     main()
