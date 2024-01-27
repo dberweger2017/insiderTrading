@@ -1,53 +1,56 @@
+from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-import json
 
-# Get the consolidated dataframe
-consolidated_df = pd.read_csv("consolidated.csv")
+# Function to calculate future price changes
+def calculate_future_price_changes(trades_df, prices_df, days_list):
+    # Ensure prices_df has 'Date' as a datetime index
+    if 'Date' in prices_df.columns:
+        prices_df['Date'] = pd.to_datetime(prices_df['Date'])
+        prices_df.set_index('Date', inplace=True)
 
-# open the file and load the dictionary
-with open('ticker_data.json', 'r') as fp:
-    ticker_data = json.load(fp)
+    # Ensure trades_df 'Trade Date' is in datetime format
+    trades_df = trades_df.copy()
+    trades_df['Trade Date'] = pd.to_datetime(trades_df['Trade Date'])
 
-# convert the dictionary back to a pandas dataframe
-ticker_data = {key: pd.DataFrame.from_dict(df, orient='index', columns=['Close']) for key, df in ticker_data.items()}
+    # Add columns for each specified day in the future
+    for days in tqdm(days_list):
+        trades_df[f'Change_{days}d'] = np.nan  # Initialize with NaN
 
-print(len(ticker_data))
-# Remove the keys whose values are empty
-ticker_data = {key: df for key, df in ticker_data.items() if not df.empty}
-print(len(ticker_data))
+        for idx, row in trades_df.iterrows():
+            trade_date = row['Trade Date']
+            ticker = row['Ticker']
 
-def calculate_growth(df, ticker, days):
-    if ticker in ticker_data:
-        try:
-            current_date = df['Filing Date']
-            previous_date = current_date - pd.Timedelta(days=days)
+            if ticker in prices_df.columns:
+                future_date = trade_date + timedelta(days=days)
+                try:
+                    # Get the stock price on the trade date and future date
+                    price_on_trade_date = prices_df.at[trade_date, ticker]
+                    price_on_future_date = prices_df.at[future_date, ticker]
+                    
+                    # Calculate the price change
+                    if not np.isnan(price_on_trade_date) and not np.isnan(price_on_future_date):
+                        price_change = (price_on_future_date - price_on_trade_date) / price_on_trade_date
+                        trades_df.at[idx, f'Change_{days}d'] = price_change
+                except KeyError:
+                    # Future date not in data
+                    continue
 
-            # Check if the previous date is within the valid range
-            if previous_date in ticker_data[ticker].index:
-                df[f'{days}d'] = (ticker_data[ticker].loc[current_date]['Close'] - ticker_data[ticker].loc[previous_date]['Close']) / ticker_data[ticker].loc[previous_date]['Close'] * 100
-                print(f"{ticker} - {days}d: {df[f'{days}d']}")
-            else:
-                df[f'{days}d'] = np.nan
-        except KeyError as e:
-            print(f"KeyError: {e}")
-            df[f'{days}d'] = np.nan
-    else:
-        df[f'{days}d'] = np.nan
-    return df
+    return trades_df
 
+df = pd.read_csv("consolidated.csv", low_memory=False)
+print("Number of trades:", len(df))
+ticker_df = pd.read_csv("ticker_data.csv", low_memory=False)
+print("Number of tickers:", len(ticker_df.columns))
 
+print(f"We have data for {round(len(df['Ticker'].unique())/len(ticker_df), 2)*100}% tickers")
 
-# List of days for which you want to calculate growth
-# days_list = [1, 2, 3, 4, 5, 10, 20, 30, 60, 120, 240, 360]
-# days_list = [i for i in range(1, 366)]
-days_list = [5, 10]
-# Iterate over each day and apply calculate_growth function with tqdm
+# Specify the days for which we want to calculate the stock price changes
+days_list = [1, 2, 3, 7, 14, 31, 62, 93, 128, 365, 730]
 
-for days in tqdm(days_list, desc="Calculating Growth"):
-    consolidated_df = consolidated_df.apply(lambda x: calculate_growth(x, x['Ticker'], days), axis=1)
-    print(f"Finished {days}d")
+# Calculate the future price changes
+updated_test_df = calculate_future_price_changes(df, ticker_df, days_list)
 
-# Save the dataframe to a csv file
-consolidated_df.to_csv("consolidated_growth.csv", index=False)
+# Save the updated dataframe to a CSV file
+updated_test_df.to_csv("consolidated_with_stock_data.csv", index=False)

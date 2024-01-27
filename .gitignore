@@ -1,5 +1,6 @@
 consolidated.csv
-ticker_data.json
+ticker_data.csv
 consolidated_growth.csv
+consolidated_with_stock_data.csv
 /data
 .DS_Store

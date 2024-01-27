@@ -19,6 +19,8 @@ for ticker in tqdm(tickers):
     except Exception as e:
         print("Error with ticker:", ticker)
 
-serializable_data = {key: {k.strftime('%Y-%m-%d %H:%M:%S') if isinstance(k, pd.Timestamp) else k: v for k, v in df.items()} for key, df in ticker_data.items()}
-with open('ticker_data.json', 'w') as fp:
-    json.dump(serializable_data, fp)
+# Convert it to pandas dataframe
+ticker_data = pd.DataFrame.from_dict(ticker_data, orient='columns')
+
+# Save the dataframe to a csv file
+ticker_data.to_csv("ticker_data.csv")
