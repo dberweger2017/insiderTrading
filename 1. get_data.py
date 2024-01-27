@@ -3,6 +3,10 @@ from datetime import datetime, timedelta
 from tqdm import tqdm
 import requests
 from concurrent.futures import ThreadPoolExecutor
+import os
+
+if not os.path.exists('data'):
+    os.makedirs('data')
 
 def getStockData(start_date, end_date):
     start_str = start_date.strftime('%m%%2F%d%%2F%Y')
