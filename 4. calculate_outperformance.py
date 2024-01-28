@@ -12,14 +12,14 @@ def calculate_future_price_changes(trades_df, prices_df, days_list):
 
     # Ensure trades_df 'Trade Date' is in datetime format
     trades_df = trades_df.copy()
-    trades_df['Trade Date'] = pd.to_datetime(trades_df['Trade Date'])
+    trades_df['Filing Date'] = pd.to_datetime(trades_df['Filing Date']).dt.normalize()
 
     # Add columns for each specified day in the future
     for days in tqdm(days_list):
         trades_df[f'Change_{days}d'] = np.nan  # Initialize with NaN
 
         for idx, row in trades_df.iterrows():
-            trade_date = row['Trade Date']
+            trade_date = row['Filing Date']
             ticker = row['Ticker']
 
             if ticker in prices_df.columns:
@@ -44,10 +44,10 @@ print("Number of trades:", len(df))
 ticker_df = pd.read_csv("ticker_data.csv", low_memory=False)
 print("Number of tickers:", len(ticker_df.columns))
 
-print(f"We have data for {round(len(df['Ticker'].unique())/len(ticker_df), 2)*100}% tickers")
+print(f"We have data for {round(len(ticker_df)/len(df['Ticker'].unique()), 2)*100}% tickers")
 
 # Specify the days for which we want to calculate the stock price changes
-days_list = [1, 2, 3, 7, 14, 31, 62, 93, 128, 365, 730]
+days_list = [1, 3, 7, 14, 31, 93, 128, 365, 730]
 
 # Calculate the future price changes
 updated_test_df = calculate_future_price_changes(df, ticker_df, days_list)
