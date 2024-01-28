@@ -47,7 +47,7 @@ print("Number of tickers:", len(ticker_df.columns))
 print(f"We have data for {round(len(ticker_df)/len(df['Ticker'].unique()), 2)*100}% tickers")
 
 # Specify the days for which we want to calculate the stock price changes
-days_list = [1, 3, 7, 14, 31, 93, 128, 365, 730]
+days_list = [5, 31, 128]
 
 # Calculate the future price changes
 updated_test_df = calculate_future_price_changes(df, ticker_df, days_list)
