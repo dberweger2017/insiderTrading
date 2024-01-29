@@ -17,7 +17,7 @@ selected_data = data[columns_for_correlation].apply(pd.to_numeric, errors='coerc
 
 # Calculate the correlation matrix
 correlation_matrix = selected_data.corr()
-
+ 
 # Filter the correlation matrix to include correlations of 'Change' columns with 'Interesting', 'Owned', 'ΔOwn', and 'Value'
 # and exclude correlations among themselves
 filtered_corr_matrix = correlation_matrix.filter(items=['Interesting', 'Owned', 'ΔOwn', 'Value']).drop(labels=['Interesting', 'Owned', 'ΔOwn', 'Value'])
