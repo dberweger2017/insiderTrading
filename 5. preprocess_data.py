@@ -35,7 +35,12 @@ data["Value"] = data["Value"].progress_apply(convert_value_to_number)
 
 data["Interesting"] = data["ΔOwn"] * data["Value"]
 
-data = data[(data['Trade Type'] == 'P - Purchase') & (data['Value'] > 10_000)]
+#data = data[(data['Trade Type'] == 'P - Purchase') & (data['Value'] > 500_000) & (data['ΔOwn'] > 0.2)]
+data = data[(data['Trade Type'] == 'P - Purchase') & (data['Value'] > 1_000_000)]
+
+#drop the columns we don't need
+no_need_columns = ["1d","1w","1m","6m"]
+data.drop(columns=no_need_columns, inplace=True)
 
 # save to csv
 data.to_csv("consolidated_with_stock_data_preprocesed.csv", index=False)

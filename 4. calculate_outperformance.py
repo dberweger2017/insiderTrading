@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 
-# Function to calculate future price changes
 def calculate_future_price_changes(trades_df, prices_df, days_list):
     # Ensure prices_df has 'Date' as a datetime index
     if 'Date' in prices_df.columns:
@@ -24,10 +23,15 @@ def calculate_future_price_changes(trades_df, prices_df, days_list):
 
             if ticker in prices_df.columns:
                 future_date = trade_date + timedelta(days=days)
+
+                # Find the next available date if the future date doesn't exist
+                while future_date not in prices_df.index and future_date <= prices_df.index[-1]:
+                    future_date += timedelta(days=1)
+
                 try:
-                    # Get the stock price on the trade date and future date
-                    price_on_trade_date = prices_df.at[trade_date, ticker]
-                    price_on_future_date = prices_df.at[future_date, ticker]
+                    # Get the stock price on the trade date and the next available future date
+                    price_on_trade_date = prices_df.at[trade_date, ticker] if trade_date in prices_df.index else np.nan
+                    price_on_future_date = prices_df.at[future_date, ticker] if future_date in prices_df.index else np.nan
                     
                     # Calculate the price change
                     if not np.isnan(price_on_trade_date) and not np.isnan(price_on_future_date):
